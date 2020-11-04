@@ -1,0 +1,18 @@
+#! /bin/bash
+>u.file
+for pid in $(ps ax -A -o pid --no-header)
+do 
+  y=$(grep -E "read_bytes:" /proc/$pid/io | awk '{ print $2 }' )
+  echo "$pid $y" >> u.file
+done
+sleep 60
+>f.file
+while read st
+do 
+  pid=$(echo $st | awk '{print $1}' )
+  y=$(grep -E "read_bytes:" /proc/$pid/io | awk '{ print $2 }' )
+  r=$(echo $st | awk '{ print $2 }')
+  y=$( echo "$y $r" | awk '{ print $1-$2 }' )
+  echo "$pid $y" >> f.file
+done < u.file
+echo "$(sort f.file -n -r -k 2 | head -3)" > f.file
