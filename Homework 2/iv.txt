@@ -1,0 +1,14 @@
+#! /bin/bash
+>h.file
+for pid in $(ps a x -o pid --no-header);
+do
+  if [[ -f "/proc/$pid/status" && -f "/proc/$pid/shed"]];
+     then
+     ppid=$( grep -E "PPid:" /proc/$pid/status | awk '{ print $2 }')
+     sm=$( grep -E "se.sum_exec_runtime" /proc/$pid/shed | awk '{ print $3 }' )
+     nr=$( grep -E "nr_switches" /proc/$pid/shed | awk '{ print $3 }')
+     art=$( echo "$sm $nr" | awk '{ print $1/$2 }')
+     echo -e "ProcessID = $pid : Parent_Process = $ppid : Average_Running_Time = $art" >> h.file;
+fi
+done
+echo "$(sort h.file -n -k 7)" > h.file
