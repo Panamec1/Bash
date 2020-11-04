@@ -1,0 +1,22 @@
+#! /bin/bash
+>t.file
+t=0 #pred strochka
+s_art=0 #summa chisel  ART
+count=0 #povtor strochki
+while read st
+do 
+z=$( echo $st | awk '{ print $7 }' )
+if  [[ $z == $t ]]; then
+     let count=$count+1
+     y=$( echo $st | awk print '{ print $11 }')
+     s_art=$( echo "$y $s_art" | awk '{ $1+$2 }')
+     echo -e "$st" >> t.file;
+else
+   ans=$(echo "$s_art $count" | awk '{ print $1/$2 }' )
+   echo -e "Average_Sleeping_Child_of_ParentID=$t is $ans" >> t.file
+   count=1
+   t=$z
+   s_art=$(echo $st | awk '{ print $11 }')
+   echo -e "$st" >> t.file;
+fi
+done < h.file
