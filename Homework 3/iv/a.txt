@@ -1,0 +1,5 @@
+#! /bin/bash
+A=2
+while true; do
+      let A=$((2+A))
+done
