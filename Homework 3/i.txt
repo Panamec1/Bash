@@ -1,0 +1,3 @@
+#! /bin/bash
+mkdir ~/test && echo "success" >> ~/report && >> ~/test/$(date +"%d-%m-%y-%H-%M-%S")
+ping -c 1 www.net_nikogo.ru || echo "$(date +"%d-%m-%y-%H-%M-%S")" >> ~/report && echo "Error in ping" >> ~/report
