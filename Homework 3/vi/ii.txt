@@ -1,0 +1,38 @@
+#! /bin/bash
+echo $$ > .pid
+A=1
+MODE="SIGTERM"
+usr1(){
+   MODE="SIGTERM"
+}
+usr2(){
+   MODE="rabota1"
+}
+usr3(){
+   MODE="rabota2"
+}
+trap 'usr1' TERM
+trap 'usr2' USR1
+trap 'usr3' USR2
+while true; do
+      if [[ "$MODE" == "rabota1" ]]; then
+            A=$(($A+2))
+            echo $A
+      fi 
+      if [[ "$MODE" == "rabota2" ]]; then
+            A=$(($A*2))
+            echo $A
+      fi
+      if [[ "$MODE" == "SIGTERM" ]]; then
+             echo "Stopped by TERM"
+             exit
+      fi
+      sleep 1
+done
+                 
+
+
+
+
+
+               
