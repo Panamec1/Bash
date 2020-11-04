@@ -1,0 +1,6 @@
+#! /bin/bash
+nice -n 2 ./a.sh&PID1=$!
+nice -n 4 ./a.sh&PID2=$!
+nice -n 6 ./a.sh&PID3=$!
+cpulimit --pid=$PID1 --limit=10 a.sh
+kill $PID3
