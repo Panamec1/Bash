@@ -1,0 +1,44 @@
+#! /bin/bash
+r=$(date +"%y-%m-%d")
+
+y1=`echo $r | awk 'BEGIN{FS="-"}{print $1}'`
+m1=`echo $r | awk 'BEGIN{FS="-"}{print $2}'`
+d1=`echo $r | awk 'BEGIN{FS="-"}{print $3}'`
+
+e=`find /$HOME/user/ -name "Backup-**-**-**"`
+u=""
+for el in $e
+do
+  b=`basename $el`
+  y2=`echo $b | awk 'BEGIN{FS="-"}{print $2}'`
+  m2=`echo $b | awk 'BEGIN{FS="-"}{print $3}'`
+  d2=`echo $b | awk 'BEGIN{FS="-"}{print $4}'`
+  u=$(($d1-$d2))
+  if [[ $y2 -lt $y1 ]]; then
+     y1=$y2
+     m1=$m2
+     d1=$d2
+     u=$el
+  else
+     if [[ $m2 -lt $m1 ]]; then
+        y1=$y2
+        m1=$m2
+        d1=$d2
+        u=$el
+     else
+        if [[ $d2 -lt $d1 ]]; then
+           y1=$y2
+           m1=$m2 
+           d1=$d2 
+           u=$el
+        fi
+     fi  
+  fi
+done
+f=`find /$HOME/user/$b/source -name "*"`
+for fil in $f
+  do
+  if [[ $fil !=*"....."* ]]; then
+     ln $fil $HOME/user/restore
+  fi
+done
