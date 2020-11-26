@@ -1,0 +1,29 @@
+#! /bin/bash
+if [[ -d $HOME/.trash ]]; then
+   f='$HOME/report'
+   while read p;
+   do
+    a=`echo $p | awk '{print $1}'`
+    c=`echo $p | awk '{print $2}'`
+    b=`basename $a`
+    if [[ "$1" == "$b" ]]; then
+       echo "IS it your file? Y/N"
+       echo $p
+       read g
+       if [[ "g" == "Y" ]]; then
+          echo "Show the directory"
+          read st
+          if [[ -d $st ]]; then
+              ln $HOME/.trash/$c $st/$b
+              rm $HOME/.trash/$c
+          else
+              ln $HOME/.trash/$c $b
+              rm $HOME/.trash/$c
+          fi
+       fi
+     fi
+    done < $HOME/.trash.log
+else
+   echo "Catalog trash doesn't exist"
+fi
+              
