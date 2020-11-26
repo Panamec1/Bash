@@ -1,0 +1,18 @@
+#! /bin/bash
+if [[ -f $1 ]]; then
+   if [[ -d $HOME/.trash ]]; then
+      echo "1"
+   else 
+      echo "Catalog doesn't exist"
+      mkdir $HOME/.trash
+      echo "But now exist"
+   fi
+   r=$(date +"%d-%m-%y-%H-%M-%S")
+   ln $1 $HOME/.trash/$r
+   rm $1
+   Sc=$(readlink -f $1)
+   pa=`dirname $Sc`
+   echo "${Sc} ${r}" >> $HOME/.trash.log
+else
+   echo "File from the wrong derictory"
+fi
