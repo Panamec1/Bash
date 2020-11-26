@@ -1,0 +1,67 @@
+#! /bin/bash
+r=$(date +"%y-%m-%d")
+
+y1=`echo $r | awk 'BEGIN{FS="-"}{print $1}'`
+m1=`echo $r | awk 'BEGIN{FS="-"}{print $2}'`
+d1=`echo $r | awk 'BEGIN{FS="-"}{print $3}'`
+
+e=`find /$HOME/user/ -name "Backup-**-**-**"`
+b=`basename $e`
+
+y2=`echo $r | awk 'BEGIN{FS="-"}{print $2}'`
+m2=`echo $r | awk 'BEGIN{FS="-"}{print $3}'`
+d2=`echo $r | awk 'BEGIN{FS="-"}{print $4}'`
+
+u=$(($d1-$d2))
+t=0
+
+if [[ $y2 -lt $y1]]; then
+   t=1
+else 
+   if [[ $m2 -lt $m1]]; then
+      t=1
+   else
+      if [[ $u -lt 8]]; then
+         t=0
+      else
+         t=1
+      fi
+   fi
+fi
+if [[ "$t" == "1" ]]; then
+   mkdir $HOME/user/Backup-`date +"%y-%m-%d"`
+   f=`find /$HOME/user/source -name "*"`
+   var1="Creation of new catalog"
+   echo "${var1}:Backup-${r}:${r}" >> $HOME/user/backup-report
+   for fil in $f
+   do 
+     ln $fil $HOME/user/Backup-`date +"%y-%m-%d"`
+     echo "`basename $fil`" >> $HOME/user/backup-report
+   done
+else
+   f=`find /$HOME/user/source/ -name "*"`
+   var3="Update catalog"
+   u1=""
+   u2=""
+   echo "${var3}:${b}:${r}" >> $HOME/user/backup-report
+   for fil in $f
+     do 
+       if [[ -f $HOME/user/Backup-`date +"%y-%m-%d"`/`basename $fil` ]]; then 
+           ln $fil $HOME/user/Backup-`date +"%y-%m-%d"`
+           twer=$HOME/user/Backup-`date +"%y-%m-%d"`/`basename $fil`
+           u1="$u1 $twer"
+       else
+           da=`basename $fil`
+           e=$HOME/user/Backup-`date +"%y-%m-%d"`/$da
+           if cmp -s $fil $e; then
+              echo ""
+           else
+              mv $HOME/user/Backup-`date +"%y-%m-%d"`/$da $HOME/user/Backup-`date +"%y-%m-%d"`/$da.`date +"%y-%m-%d"`
+              twer=$HOME/user/Backup-`date +"%y-%m-%d"`/$da.`date +"%y-%m-%d"`
+              u2="$u2 $twer"
+           fi
+       fi
+     done
+     echo $u1 >> $HOME/user/backup-report
+     echo $u2 >> $HOME/user/backup-report
+fi
